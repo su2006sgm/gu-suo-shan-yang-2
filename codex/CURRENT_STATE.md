@@ -8,6 +8,7 @@
 
 ## 最近完成
 
+- 已於 2026-06-08 建立並推送公開 GitHub 儲存庫：`https://github.com/su2006sgm/taiwan-goat-lock`，主分支為 `main`。
 - 已建立新版 `codex/` 最小骨架。
 - 已新增 `.gitignore`，忽略協作暫存、私密資料、壓縮備份與常見建置產物。
 - 已產生 `gemini_share_qrcode.png` 與 `gemini_share_qrcode.svg`。
@@ -25,6 +26,5 @@
 
 ## 下一步
 
-- 已於 2026-06-08 初始化本機 Git `main` 分支，準備建立並推送至 `su2006sgm/taiwan-goat-lock` 公開儲存庫；目前等待 GitHub CLI 裝置授權完成。
 - 目前公開網址是 localhost.run 免費短效 tunnel；若電腦關機、Python HTTP server 停止、SSH tunnel 停止或免費域名回收，網址會失效。
 - 若要長期公開，需要部署到穩定平台，例如 GitHub Pages、Cloudflare Pages、Netlify 或自有主機，並重產 QR code。

@@ -51,3 +51,6 @@
 - 已初始化本機 Git 儲存庫，主分支為 `main`，本機提交者設定為 `su2006sgm <su2006sgm@users.noreply.github.com>`。
 - 建議預設遠端儲存庫：公開 `su2006sgm/taiwan-goat-lock`。
 - 推送範圍包含網站、QR code、`.gitignore` 與可交接的 `codex/` 文件；排除 `codex/tmp/`、`codex/artifacts/`、`codex_compressed/`。
+- 已完成 GitHub CLI 裝置授權，確認登入帳號為 `su2006sgm`。
+- 已建立公開儲存庫 `https://github.com/su2006sgm/taiwan-goat-lock`，設定 `origin` 並推送 `main`。
+- 協作記憶壓縮：`codex_compressed/2026-06-08_193053.tar.gz`。

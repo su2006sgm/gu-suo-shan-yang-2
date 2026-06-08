@@ -45,3 +45,12 @@ npx --yes localtunnel --port 5190
 ```powershell
 tar -czf codex_compressed/YYYY-MM-DD_HHMMSS.tar.gz codex
 ```
+
+## GitHub
+
+- 遠端儲存庫：`https://github.com/su2006sgm/taiwan-goat-lock`
+- 主分支：`main`
+
+```powershell
+git push origin main
+```
