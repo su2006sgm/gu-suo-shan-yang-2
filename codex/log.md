@@ -55,3 +55,6 @@
 - 已建立公開儲存庫 `https://github.com/su2006sgm/taiwan-goat-lock`，設定 `origin` 並推送 `main`。
 - 協作記憶壓縮：`codex_compressed/2026-06-08_193053.tar.gz`。
 - 第二次推送時 Git Credential Manager 誤用舊帳號 `loyu0425` 而回傳 403；執行 `gh auth setup-git` 後已改用 `su2006sgm` 並推送成功。
+- 使用者要求把 GitHub 專案名稱改成「古鎖山羊2」。GitHub 移除純中文名稱後曾暫時產生 `-2`；已立即修正儲存庫網址名稱為 `gu-suo-shan-yang-2`，並將描述設為「古鎖山羊2」。
+- 已同步本機 `origin` 為 `https://github.com/su2006sgm/gu-suo-shan-yang-2.git`。
+- 協作記憶壓縮：`codex_compressed/2026-06-08_193312.tar.gz`。

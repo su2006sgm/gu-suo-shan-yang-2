@@ -49,8 +49,19 @@
 - 狀態：active
 - 證據：observed
 - 日期：2026-06-08
-- 影響範圍：推送到 `su2006sgm/taiwan-goat-lock`
+- 影響範圍：推送到 `su2006sgm/gu-suo-shan-yang-2`
 - 正確做法：先確認 `gh auth status` 顯示 `su2006sgm`；若 `git push` 仍顯示其他帳號的 403，執行 `gh auth setup-git` 後重推。
 - 不要做：不要因 `gh` 已登入就假設 Git Credential Manager 一定使用同一帳號。
 - 驗證方式：`git push origin main` 成功，且 `git rev-parse HEAD` 與 `git rev-parse origin/main` 相同。
 - 相關檔案：`codex/COMMANDS.md`
+
+## GitHub 儲存庫名稱不保留中文
+
+- 狀態：active
+- 證據：observed
+- 日期：2026-06-08
+- 影響範圍：GitHub 專案命名
+- 正確做法：專案顯示描述可使用「古鎖山羊2」，儲存庫網址名稱使用 `gu-suo-shan-yang-2`。
+- 不要做：不要直接把儲存庫名稱改成純中文；GitHub 會移除中文字元，本次曾暫時產生 `-2`。
+- 驗證方式：`gh repo view su2006sgm/gu-suo-shan-yang-2 --json name,description,url`
+- 相關檔案：`codex/PROJECT.md`

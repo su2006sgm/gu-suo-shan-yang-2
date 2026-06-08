@@ -6,7 +6,8 @@
 
 ## 本次網址
 
-- GitHub 儲存庫：`https://github.com/su2006sgm/taiwan-goat-lock`
+- GitHub 專案名稱：古鎖山羊2
+- GitHub 儲存庫：`https://github.com/su2006sgm/gu-suo-shan-yang-2`
 - 來源網址：`https://gemini.google.com/share/216eb2bfab81`
 - 靜態網站：`site/index.html`
 - 網站 QR code：`site/site_qrcode.png`、`site/site_qrcode.svg`

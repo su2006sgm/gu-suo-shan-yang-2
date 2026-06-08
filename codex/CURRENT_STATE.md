@@ -8,7 +8,7 @@
 
 ## 最近完成
 
-- 已於 2026-06-08 建立並推送公開 GitHub 儲存庫：`https://github.com/su2006sgm/taiwan-goat-lock`，主分支為 `main`。
+- 已於 2026-06-08 建立並推送公開 GitHub 儲存庫，後依使用者要求改名為「古鎖山羊2」；因 GitHub 會移除中文儲存庫網址字元，實際網址名稱使用 `gu-suo-shan-yang-2`，描述為「古鎖山羊2」：`https://github.com/su2006sgm/gu-suo-shan-yang-2`，主分支為 `main`。
 - 已建立新版 `codex/` 最小骨架。
 - 已新增 `.gitignore`，忽略協作暫存、私密資料、壓縮備份與常見建置產物。
 - 已產生 `gemini_share_qrcode.png` 與 `gemini_share_qrcode.svg`。
