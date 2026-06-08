@@ -1,0 +1,1650 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>台灣山羊古鎖 × 南洋工藝</title>
+  <meta name="description" content="台灣山羊古鎖與印尼 Batik 圖騰結合的互動式簧片鎖模擬網站。">
+  <style>
+    :root {
+      --bg: #100c08;
+      --panel: #18100b;
+      --panel-2: #24170e;
+      --line: #7b4a23;
+      --line-soft: rgba(255, 178, 88, .24);
+      --text: #f6e2bd;
+      --muted: #b99264;
+      --gold: #f3b552;
+      --accent: #72e3fd;
+      --danger: #f05045;
+      --leaf: #7ec66d;
+      --shadow: 0 18px 60px rgba(0, 0, 0, .36);
+      --radius: 8px;
+      --model-scale: .78;
+      --key-light: 0;
+      --unlock-glow: .18;
+      --hero-scale: 1;
+      --hero-shift: 0px;
+      --hero-light-alpha: .08;
+      --svg-key-shift: 0px;
+      --svg-shackle-shift: 0px;
+      --active-model-scale: .82;
+      color-scheme: dark;
+      font-family: "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding-bottom: 118px;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(114, 227, 253, .10), transparent 24rem),
+        radial-gradient(circle at 82% 8%, rgba(243, 181, 82, .12), transparent 20rem),
+        linear-gradient(115deg, #0a0705, var(--bg) 42%, #160b07);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .18;
+      background-image:
+        linear-gradient(135deg, rgba(255,255,255,.04) 25%, transparent 25%),
+        linear-gradient(225deg, rgba(255,255,255,.035) 25%, transparent 25%);
+      background-size: 42px 42px;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .app {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 48px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      border: 1px solid rgba(243, 181, 82, .45);
+      border-radius: var(--radius);
+      background: linear-gradient(145deg, #3b2412, #18100b);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.12);
+      font-size: 25px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.55rem, 3vw, 2.45rem);
+      letter-spacing: 0;
+      line-height: 1.15;
+    }
+
+    .subtitle {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: .95rem;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .chip,
+    .tool-button {
+      min-height: 38px;
+      padding: 0 13px;
+      border: 1px solid var(--line-soft);
+      border-radius: var(--radius);
+      color: var(--text);
+      background: rgba(30, 20, 14, .88);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+      cursor: pointer;
+    }
+
+    .tool-button.active,
+    .chip.active {
+      border-color: rgba(114, 227, 253, .58);
+      color: #dff8ff;
+      background: rgba(33, 48, 52, .84);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(320px, .72fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      border: 1px solid var(--line-soft);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(36, 23, 14, .92), rgba(17, 12, 9, .92));
+      box-shadow: var(--shadow);
+    }
+
+    .panel-inner {
+      padding: 20px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 12px;
+      color: var(--gold);
+      font-size: 1.1rem;
+    }
+
+    .story {
+      line-height: 1.8;
+      color: #eed8ad;
+    }
+
+    .story strong {
+      color: #ffd27b;
+    }
+
+    .story-list {
+      display: grid;
+      gap: 9px;
+      margin: 12px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .story-list li {
+      border-left: 2px solid var(--gold);
+      padding-left: 12px;
+      color: #dfc292;
+    }
+
+    .stage {
+      position: relative;
+      min-height: 640px;
+      overflow: hidden;
+      border-radius: var(--radius);
+      perspective: 900px;
+      background:
+        radial-gradient(circle at 66% 56%, rgba(243,181,82,.09), transparent 15rem),
+        radial-gradient(circle at 36% 62%, rgba(115,82,48,.12), transparent 16rem),
+        linear-gradient(180deg, #120d09 0%, #0f0a07 58%, #0b0705 100%);
+    }
+
+    .stage::before {
+      content: "";
+      position: absolute;
+      inset: auto 0 0;
+      height: 85px;
+      background:
+        repeating-linear-gradient(45deg, rgba(255,255,255,.055) 0 7px, transparent 7px 16px),
+        linear-gradient(90deg, #0c723d, #138653);
+      border-top: 1px solid rgba(126, 198, 109, .42);
+      z-index: 2;
+      display: none;
+    }
+
+    .status-line {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      right: 20px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--gold);
+      min-height: 40px;
+      align-items: center;
+      padding: 0 14px;
+      border-radius: 8px;
+      background: rgba(0,0,0,.82);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+      font-size: .98rem;
+      font-weight: 800;
+      z-index: 5;
+    }
+
+    #hapticStatus {
+      display: none;
+    }
+
+    .hero-model {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      top: 48px;
+      bottom: 78px;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border-radius: var(--radius);
+      background:
+        radial-gradient(circle at 70% 55%, rgba(243,181,82,.20), transparent 18rem),
+        linear-gradient(180deg, #15110d, #0b0806);
+      box-shadow:
+        inset 0 0 0 1px rgba(243,181,82,.22),
+        0 20px 48px rgba(0,0,0,.34),
+        0 0 38px rgba(243,181,82,var(--unlock-glow));
+      transform: rotateX(0deg) rotateY(0deg);
+      transform-origin: center;
+      transition: transform .18s ease, box-shadow .2s ease;
+      display: none;
+    }
+
+    .hero-model::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 74% 56%, rgba(255,212,111,var(--hero-light-alpha)), transparent 22%),
+        linear-gradient(180deg, rgba(8,6,5,.08), transparent 34%, rgba(8,6,5,.18));
+    }
+
+    .serow-lock-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      overflow: visible;
+    }
+
+    .model-core {
+      transform-box: fill-box;
+      transform-origin: 50% 58%;
+      transform: scale(var(--hero-scale)) translateX(var(--hero-shift));
+      filter: drop-shadow(0 24px 22px rgba(0,0,0,.48));
+      transition: transform .18s ease, filter .18s ease;
+    }
+
+    .svg-key {
+      transform-box: fill-box;
+      transform-origin: 28% 50%;
+      transform: translateX(var(--svg-key-shift));
+      transition: transform .18s ease;
+    }
+
+    .svg-shackle {
+      transform-box: fill-box;
+      transform-origin: 50% 50%;
+      transform: translateX(var(--svg-shackle-shift));
+      transition: transform .22s ease;
+    }
+
+    .etched-line {
+      opacity: calc(.58 + var(--key-light));
+    }
+
+    .key-glow {
+      opacity: var(--hero-light-alpha);
+    }
+
+    .svg-fur {
+      stroke-linecap: round;
+      opacity: .54;
+    }
+
+    .lock-area {
+      position: absolute;
+      left: 50%;
+      top: 54%;
+      width: 820px;
+      height: 340px;
+      transform: translate(-50%, -50%) scale(var(--active-model-scale)) rotateX(var(--tilt, 0deg));
+      transition: transform .18s ease;
+      transform-style: preserve-3d;
+      display: block;
+    }
+
+    .shackle {
+      position: absolute;
+      left: calc(50% - 220px + var(--unlock-shift, 0px));
+      top: 74px;
+      width: 360px;
+      height: 28px;
+      border: 2px solid rgba(0,0,0,.74);
+      border-radius: 8px;
+      background:
+        linear-gradient(90deg, #1f2426, #424a4d 18%, #1d2425 46%, #111719 100%);
+      box-shadow: inset 0 2px 0 rgba(255,255,255,.12), inset 0 -6px 12px rgba(0,0,0,.48), 0 18px 25px rgba(0,0,0,.38);
+      transform: translateZ(78px);
+      transition: left .28s ease, transform .22s ease;
+      z-index: 6;
+    }
+
+    .shackle::before {
+      content: "";
+      position: absolute;
+      left: -28px;
+      top: -13px;
+      width: 24px;
+      height: 58px;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #775338, #d2a76d 48%, #6a462d);
+      box-shadow: inset 0 2px 0 rgba(255,255,255,.22), 0 10px 18px rgba(0,0,0,.32);
+    }
+
+    .shackle::after {
+      content: "";
+      position: absolute;
+      left: 24px;
+      top: 24px;
+      width: 46px;
+      height: 154px;
+      border-radius: 0 0 8px 8px;
+      background: linear-gradient(90deg, #80613f, #d0aa70 46%, #6a4c31);
+      box-shadow: inset 10px 0 14px rgba(0,0,0,.2), inset -8px 0 10px rgba(255,255,255,.08);
+    }
+
+    .lock-body {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      overflow: visible;
+      transform: rotateX(8deg) rotateY(var(--model-turn, -8deg)) translateZ(18px);
+      transform-style: preserve-3d;
+      transition: transform .22s ease;
+    }
+
+    .lock-body::before {
+      content: "";
+      position: absolute;
+      left: 195px;
+      top: 90px;
+      width: 92px;
+      height: 168px;
+      border-radius: 10px;
+      border: 1px solid rgba(53, 34, 18, .78);
+      background:
+        linear-gradient(90deg, rgba(255,255,255,.12), transparent 24%),
+        linear-gradient(180deg, #99754a, #4b331f 70%, #2b1d13);
+      box-shadow: inset 18px 0 26px rgba(255,255,255,.08), inset -18px 0 20px rgba(0,0,0,.32), 0 18px 28px rgba(0,0,0,.34);
+      transform: translateZ(38px);
+      pointer-events: none;
+    }
+
+    .lock-body::after {
+      content: "";
+      position: absolute;
+      left: 520px;
+      top: 116px;
+      width: 78px;
+      height: 154px;
+      border-radius: 10px;
+      background: linear-gradient(90deg, #80613f, #3b2719 70%);
+      box-shadow: inset 12px 0 16px rgba(255,255,255,.08), inset -16px 0 18px rgba(0,0,0,.34), 0 16px 28px rgba(0,0,0,.35);
+      transform: translateZ(28px);
+    }
+
+    .goat-head {
+      position: absolute;
+      left: 492px;
+      top: 52px;
+      width: 142px;
+      height: 154px;
+      border-radius: 24% 18% 34% 32% / 25% 22% 48% 42%;
+      background:
+        linear-gradient(120deg, rgba(255,230,161,.78), transparent 23%),
+        linear-gradient(155deg, #b99a6f 0 28%, #806343 29% 52%, #c7aa7a 53% 68%, #533928 69% 100%);
+      box-shadow: inset -20px -24px 0 rgba(48, 31, 19, .34), 0 18px 28px rgba(0,0,0,.34), 0 0 34px rgba(243,181,82,.18);
+      transform: translateZ(88px) rotate(-9deg);
+      z-index: 8;
+    }
+
+    .goat-head::before,
+    .goat-head::after {
+      content: "";
+      position: absolute;
+      top: -68px;
+      width: 108px;
+      height: 84px;
+      border: 10px solid #2f2518;
+      border-bottom: 0;
+      border-radius: 92% 92% 0 0;
+      background:
+        repeating-linear-gradient(108deg, transparent 0 8px, rgba(244,199,106,.48) 9px 12px, transparent 13px 20px);
+      box-shadow: inset 0 8px 0 rgba(255,222,142,.16), 0 8px 14px rgba(0,0,0,.18);
+    }
+
+    .goat-head::before {
+      left: -24px;
+      transform: rotate(-30deg);
+    }
+
+    .goat-head::after {
+      left: 24px;
+      transform: rotate(16deg) scaleX(.78);
+      opacity: .82;
+    }
+
+    .goat-face {
+      position: absolute;
+      right: -72px;
+      top: 58px;
+      width: 104px;
+      height: 68px;
+      border-radius: 0;
+      clip-path: polygon(0 12%, 66% 6%, 100% 41%, 86% 72%, 38% 86%, 6% 62%);
+      background:
+        radial-gradient(circle at 82% 50%, #120c08 0 4px, transparent 5px),
+        linear-gradient(125deg, #c6a879 0 32%, #7b5738 33% 66%, #372317 67% 100%);
+      box-shadow: inset -12px -9px 0 rgba(0,0,0,.2);
+    }
+
+    .goat-face::before {
+      content: "";
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      width: 42px;
+      height: 28px;
+      clip-path: polygon(0 0, 100% 22%, 66% 100%, 12% 68%);
+      background: rgba(255,235,170,.22);
+    }
+
+    .goat-face::after {
+      content: "";
+      position: absolute;
+      right: 13px;
+      top: 35px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #160e09;
+      box-shadow: -50px -32px 0 -2px rgba(255,244,184,.5);
+    }
+
+    .goat-ear {
+      position: absolute;
+      width: 52px;
+      height: 34px;
+      border-radius: 0;
+      clip-path: polygon(0 18%, 100% 0, 72% 76%, 22% 100%);
+      background: linear-gradient(135deg, #c8a371, #4b3221 76%);
+      box-shadow: inset -8px -5px 0 rgba(23,14,8,.24);
+      z-index: 9;
+    }
+
+    .goat-ear.left {
+      left: 14px;
+      top: 16px;
+      transform: rotate(-126deg);
+    }
+
+    .goat-ear.right {
+      left: 92px;
+      top: 29px;
+      transform: rotate(-18deg) scale(.82);
+    }
+
+    .goat-eye {
+      position: absolute;
+      right: 39px;
+      top: 50px;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      background: #fff3bb;
+      box-shadow: inset 0 0 0 5px #13100a, 0 0 12px rgba(255,221,116,.72);
+      z-index: 10;
+    }
+
+    .goat-body-3d {
+      position: absolute;
+      left: 82px;
+      top: 134px;
+      width: 368px;
+      height: 146px;
+      border-radius: 22px 72px 36px 82px / 54px 44px 34px 72px;
+      background:
+        radial-gradient(ellipse at 70% 34%, rgba(255,230,158,.35), transparent 0 48px),
+        linear-gradient(104deg, rgba(255,236,170,.7), transparent 14%),
+        linear-gradient(145deg, #6a5439 0 24%, #a58659 25% 45%, #c3a575 46% 62%, #72543a 63% 78%, #432e1e 79% 100%);
+      box-shadow: inset -26px -24px 0 rgba(47, 30, 17, .24), inset 18px 16px 0 rgba(255,255,255,.08), 0 26px 42px rgba(0,0,0,.34);
+      transform: translateZ(34px) rotateY(-6deg);
+      z-index: 2;
+    }
+
+    .goat-body-3d .goat-back,
+    .goat-body-3d .goat-neck,
+    .goat-body-3d .goat-beard,
+    .goat-facet {
+      position: absolute;
+      display: block;
+      pointer-events: none;
+    }
+
+    .goat-back {
+      left: 62px;
+      top: 16px;
+      width: 230px;
+      height: 46px;
+      clip-path: polygon(0 62%, 26% 12%, 62% 0, 100% 48%, 74% 76%, 32% 74%);
+      background: linear-gradient(125deg, rgba(255,226,144,.5), rgba(65,42,24,.22));
+      transform: rotate(4deg);
+      opacity: .8;
+    }
+
+    .goat-neck {
+      right: -28px;
+      top: -22px;
+      width: 92px;
+      height: 112px;
+      border-radius: 0;
+      clip-path: polygon(18% 0, 82% 13%, 100% 58%, 66% 100%, 12% 82%, 0 34%);
+      background:
+        linear-gradient(120deg, rgba(255,226,128,.28), transparent 36%),
+        linear-gradient(130deg, #8a6b47 0 40%, #6a4b32 41% 68%, #4f3725 69% 100%);
+      box-shadow: inset -16px -14px 0 rgba(32,20,12,.18);
+      transform: rotate(-12deg);
+      z-index: 5;
+    }
+
+    .goat-beard {
+      right: -76px;
+      top: 46px;
+      width: 58px;
+      height: 92px;
+      border-radius: 0;
+      clip-path: polygon(22% 0, 84% 14%, 100% 52%, 58% 100%, 18% 78%, 0 34%);
+      background:
+        linear-gradient(120deg, rgba(255,232,166,.24), transparent 42%),
+        linear-gradient(150deg, #8a6b47 0 38%, #5c432d 39% 63%, #302216 64% 100%);
+      box-shadow: inset -9px -12px 0 rgba(0,0,0,.22);
+      transform: rotate(-5deg);
+      z-index: 6;
+    }
+
+    .goat-facet {
+      opacity: .7;
+      mix-blend-mode: screen;
+      filter: drop-shadow(0 1px 0 rgba(0,0,0,.12));
+    }
+
+    .goat-head .head-a {
+      left: 18px;
+      top: 18px;
+      width: 64px;
+      height: 68px;
+      clip-path: polygon(0 24%, 62% 0, 100% 46%, 44% 100%);
+      background: rgba(255,235,170,.32);
+    }
+
+    .goat-head .head-b {
+      right: 7px;
+      top: 28px;
+      width: 64px;
+      height: 82px;
+      clip-path: polygon(0 0, 100% 22%, 82% 76%, 32% 100%);
+      background: rgba(60,38,23,.32);
+      mix-blend-mode: multiply;
+    }
+
+    .goat-body-3d .body-a {
+      left: 26px;
+      top: 34px;
+      width: 112px;
+      height: 88px;
+      clip-path: polygon(0 32%, 42% 0, 100% 40%, 64% 100%, 12% 84%);
+      background: rgba(255,235,170,.28);
+    }
+
+    .goat-body-3d .body-b {
+      left: 126px;
+      top: 12px;
+      width: 128px;
+      height: 108px;
+      clip-path: polygon(8% 0, 88% 16%, 100% 66%, 46% 100%, 0 50%);
+      background: rgba(255,244,184,.18);
+    }
+
+    .goat-body-3d .body-c {
+      right: 22px;
+      top: 34px;
+      width: 104px;
+      height: 94px;
+      clip-path: polygon(0 12%, 100% 0, 82% 72%, 28% 100%);
+      background: rgba(42,28,18,.38);
+      mix-blend-mode: multiply;
+    }
+
+    .goat-body-3d::before,
+    .goat-body-3d::after {
+      content: "";
+      position: absolute;
+      bottom: -26px;
+      width: 20px;
+      height: 74px;
+      border-radius: 4px;
+      clip-path: polygon(18% 0, 82% 0, 100% 80%, 66% 100%, 0 92%);
+      background: linear-gradient(#7a5c38 0 58%, #21160f 59% 100%);
+      box-shadow:
+        82px 6px 0 #5c432b,
+        168px -2px 0 #4c3624,
+        252px 3px 0 #352619;
+    }
+
+    .goat-body-3d::before {
+      left: 64px;
+      transform: rotate(7deg);
+    }
+
+    .goat-body-3d::after {
+      left: 112px;
+      transform: rotate(-5deg);
+    }
+
+    .goat-tail-3d {
+      position: absolute;
+      left: 68px;
+      top: 142px;
+      width: 82px;
+      height: 98px;
+      border-radius: 0;
+      clip-path: polygon(10% 28%, 58% 4%, 100% 38%, 76% 84%, 28% 100%, 0 62%);
+      background:
+        linear-gradient(125deg, rgba(255,226,128,.42), transparent 36%),
+        linear-gradient(145deg, #826846 0 42%, #b29667 43% 62%, #4d3522 63% 100%);
+      box-shadow: inset -14px -12px 0 rgba(47,30,17,.2), 0 20px 28px rgba(0,0,0,.24);
+      transform: translateZ(42px) rotate(-8deg);
+      z-index: 3;
+    }
+
+    .carved-badge {
+      position: absolute;
+      left: 300px;
+      top: 130px;
+      display: grid;
+      place-items: center;
+      width: 188px;
+      height: 112px;
+      border: 3px solid #8d6428;
+      border-radius: 18px;
+      color: #6f4d1c;
+      font-weight: 900;
+      font-size: 1.28rem;
+      line-height: 1.15;
+      text-align: center;
+      background:
+        radial-gradient(circle at 50% 12%, rgba(255,255,255,.58), transparent 20%),
+        linear-gradient(180deg, #ffe596, #d49b32 54%, #8b5e1d);
+      box-shadow: inset 0 0 0 2px rgba(255,242,184,.55), inset 0 -12px 18px rgba(105,62,12,.2), 0 18px 30px rgba(0,0,0,.36), 0 0 28px rgba(243,181,82,.16);
+      transform: translateZ(92px);
+      z-index: 9;
+    }
+
+    .carved-badge::before {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border: 2px dashed rgba(109,72,18,.42);
+      border-radius: 12px;
+      pointer-events: none;
+    }
+
+    .carved-badge::after {
+      content: "吉　　　　如\a 祥　　　　意";
+      white-space: pre;
+      position: absolute;
+      inset: 45px 28px 16px;
+      color: rgba(95,63,21,.72);
+      font-size: .86rem;
+      font-weight: 700;
+      line-height: 1.8;
+    }
+
+    .keyhole {
+      position: absolute;
+      left: 395px;
+      top: 176px;
+      width: 46px;
+      height: 50px;
+      transform: none;
+      border-radius: 11px 11px 7px 7px;
+      background: #120d0b;
+      box-shadow: inset 0 0 0 4px rgba(39, 20, 8, .55), 0 0 18px rgba(114,227,253,.14);
+      z-index: 10;
+    }
+
+    .keyhole::before {
+      content: "";
+      position: absolute;
+      left: 15px;
+      top: 10px;
+      width: 16px;
+      height: 14px;
+      border-radius: 50%;
+      background: #050302;
+      box-shadow: 0 17px 0 1px #050302;
+    }
+
+    .key {
+      position: absolute;
+      left: calc(50% + 145px - var(--key-depth, 0px));
+      top: 154px;
+      width: 220px;
+      height: 82px;
+      transform: translateZ(120px);
+      transform-origin: center;
+      transition: left .16s ease;
+      z-index: 12;
+    }
+
+    .key::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 34px;
+      width: 150px;
+      height: 14px;
+      border-radius: 10px;
+      background: linear-gradient(90deg, #ffe083 0 14px, #1e2526 14px 100%);
+      box-shadow: 0 0 18px rgba(243,181,82,.32);
+    }
+
+    .key::after {
+      content: "";
+      position: absolute;
+      right: 8px;
+      top: 7px;
+      width: 64px;
+      height: 64px;
+      border: 8px solid #d99d45;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, transparent 0 11px, #6a4314 12px 15px, transparent 16px),
+        conic-gradient(from 0deg, #6a4314 0 8deg, transparent 8deg 37deg, #6a4314 37deg 45deg, transparent 45deg 82deg, #6a4314 82deg 90deg, transparent 90deg 127deg, #6a4314 127deg 135deg, transparent 135deg 172deg, #6a4314 172deg 180deg, transparent 180deg 217deg, #6a4314 217deg 225deg, transparent 225deg 262deg, #6a4314 262deg 270deg, transparent 270deg 307deg, #6a4314 307deg 315deg, transparent 315deg);
+      box-shadow: inset 0 0 0 5px rgba(255,238,170,.42), 0 0 28px rgba(243,181,82,.62);
+    }
+
+    .leaves {
+      position: absolute;
+      bottom: 82px;
+      left: 28%;
+      color: var(--leaf);
+      font-size: 2rem;
+      transform: rotate(-18deg);
+      text-shadow: 0 0 12px rgba(126, 198, 109, .42);
+      z-index: 4;
+      display: none;
+    }
+
+    .goat-call {
+      position: absolute;
+      right: 30px;
+      bottom: 92px;
+      border: 1px solid rgba(243, 181, 82, .35);
+      border-radius: var(--radius);
+      background: rgba(8, 6, 5, .58);
+      color: #ffe6bb;
+      padding: 10px 12px;
+      z-index: 4;
+      display: none;
+    }
+
+    .bottom-habitat {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 112px;
+      z-index: 8;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, transparent 0, rgba(8, 6, 5, .18) 16px),
+        repeating-linear-gradient(78deg, rgba(255,255,255,.06) 0 5px, transparent 5px 14px),
+        linear-gradient(90deg, #0f6038, #168552 46%, #0f6b43);
+      border-top: 1px solid rgba(126, 198, 109, .44);
+      box-shadow: 0 -18px 40px rgba(0,0,0,.32);
+      overflow: hidden;
+    }
+
+    .bottom-habitat::before {
+      content: "///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: -8px;
+      color: rgba(163, 231, 128, .72);
+      font-size: 30px;
+      letter-spacing: 12px;
+      transform: skewX(-12deg);
+    }
+
+    .chibi-goat {
+      position: absolute;
+      left: 0;
+      bottom: 19px;
+      width: 148px;
+      height: 74px;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      pointer-events: auto;
+      animation: goatWalk 12s linear infinite alternate;
+    }
+
+    .chibi-goat.paused {
+      animation-play-state: paused;
+    }
+
+    .chibi-goat-body {
+      position: absolute;
+      left: 35px;
+      bottom: 11px;
+      width: 82px;
+      height: 46px;
+      border-radius: 50% 44% 45% 50%;
+      background: linear-gradient(145deg, #e9c39a, #c99061);
+      box-shadow: inset -8px -7px 0 rgba(116, 64, 38, .18), 0 8px 16px rgba(0,0,0,.26);
+    }
+
+    .chibi-goat-head {
+      position: absolute;
+      left: 15px;
+      bottom: 28px;
+      width: 44px;
+      height: 38px;
+      border-radius: 48% 52% 44% 56%;
+      background: linear-gradient(145deg, #f0d3ad, #c3875e);
+    }
+
+    .chibi-goat-head::before,
+    .chibi-goat-head::after {
+      content: "";
+      position: absolute;
+      top: -13px;
+      width: 20px;
+      height: 25px;
+      border: 4px solid #3c2a1d;
+      border-bottom: 0;
+      border-radius: 80% 80% 0 0;
+    }
+
+    .chibi-goat-head::before {
+      left: 6px;
+      transform: rotate(-34deg);
+    }
+
+    .chibi-goat-head::after {
+      left: 21px;
+      transform: rotate(28deg);
+    }
+
+    .chibi-goat-eye {
+      position: absolute;
+      left: 13px;
+      top: 16px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #1b120c;
+      box-shadow: 16px 2px 0 #1b120c;
+    }
+
+    .chibi-goat-leg {
+      position: absolute;
+      bottom: 0;
+      width: 9px;
+      height: 24px;
+      border-radius: 8px;
+      background: #5b3928;
+      transform-origin: top;
+      animation: legStep .45s ease-in-out infinite alternate;
+    }
+
+    .chibi-goat-leg.one { left: 48px; }
+    .chibi-goat-leg.two { left: 70px; animation-delay: .22s; }
+    .chibi-goat-leg.three { left: 91px; animation-delay: .12s; }
+    .chibi-goat-leg.four { left: 111px; animation-delay: .3s; }
+
+    .chibi-tail {
+      position: absolute;
+      left: 112px;
+      bottom: 45px;
+      width: 24px;
+      height: 14px;
+      border-radius: 50%;
+      background: #f0d3ad;
+      transform: rotate(20deg);
+    }
+
+    .goat-bubble {
+      position: absolute;
+      left: 22px;
+      bottom: 70px;
+      min-width: 58px;
+      padding: 6px 9px;
+      border: 1px solid rgba(255,255,255,.32);
+      border-radius: 999px;
+      background: rgba(20, 15, 11, .82);
+      color: #fff1cb;
+      font-weight: 800;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity .18s ease, transform .18s ease;
+    }
+
+    .chibi-goat.speaking .goat-bubble {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @keyframes goatWalk {
+      0% {
+        transform: translateX(0) scaleX(1);
+      }
+      49% {
+        transform: translateX(calc(100vw - 160px)) scaleX(1);
+      }
+      50% {
+        transform: translateX(calc(100vw - 160px)) scaleX(-1);
+      }
+      100% {
+        transform: translateX(0) scaleX(-1);
+      }
+    }
+
+    @keyframes legStep {
+      from { transform: rotate(-10deg); }
+      to { transform: rotate(12deg); }
+    }
+
+    .steps {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      align-items: center;
+      min-height: 42px;
+      padding: 8px 10px;
+      border: 1px solid transparent;
+      border-radius: var(--radius);
+      color: var(--muted);
+      background: rgba(255,255,255,.025);
+    }
+
+    .step.active {
+      border-color: rgba(243, 181, 82, .34);
+      color: #ffe1a5;
+      background: rgba(243, 181, 82, .08);
+    }
+
+    .step.done {
+      color: #dff8ff;
+      border-color: rgba(114, 227, 253, .36);
+    }
+
+    .step-number {
+      display: grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(243, 181, 82, .18);
+      color: var(--gold);
+      font-weight: 700;
+      font-size: .88rem;
+    }
+
+    .workshop {
+      display: grid;
+      gap: 18px;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .field label {
+      color: #f8dca2;
+      font-size: .95rem;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    .range-readout {
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .choice {
+      min-height: 44px;
+      border: 1px solid var(--line-soft);
+      border-radius: var(--radius);
+      background: rgba(0,0,0,.22);
+      color: var(--text);
+      cursor: pointer;
+      padding: 6px 8px;
+    }
+
+    .choice.active {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(114, 227, 253, .12);
+    }
+
+    .notes {
+      display: grid;
+      gap: 12px;
+    }
+
+    .note {
+      border-top: 1px solid var(--line-soft);
+      padding-top: 14px;
+      line-height: 1.75;
+      color: #dfc79e;
+    }
+
+    .note h3 {
+      margin: 0 0 8px;
+      color: var(--gold);
+      font-size: 1rem;
+    }
+
+    .success {
+      position: fixed;
+      inset: 0;
+      display: none;
+      place-items: center;
+      padding: 20px;
+      background: rgba(7, 5, 4, .76);
+      z-index: 10;
+    }
+
+    .success.show {
+      display: grid;
+    }
+
+    .success-card {
+      width: min(560px, 100%);
+      border: 1px solid rgba(114, 227, 253, .45);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, #1b1410, #0e0a08);
+      box-shadow: 0 24px 90px rgba(0,0,0,.58);
+      padding: 28px;
+      text-align: center;
+    }
+
+    .success-card h2 {
+      margin: 0 0 8px;
+      color: #dff8ff;
+      font-size: clamp(1.5rem, 4vw, 2.1rem);
+    }
+
+    .success-card p {
+      color: #e8d1aa;
+      line-height: 1.8;
+    }
+
+    .primary {
+      min-height: 42px;
+      padding: 0 18px;
+      border: 1px solid rgba(114, 227, 253, .45);
+      border-radius: var(--radius);
+      background: #123b43;
+      color: #e7fbff;
+      cursor: pointer;
+    }
+
+    @media (max-width: 880px) {
+      :root {
+        --model-scale: .66;
+        --active-model-scale: .68;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .controls {
+        justify-content: flex-start;
+      }
+
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .button-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stage {
+        min-height: 520px;
+      }
+
+      .hero-model {
+        top: 68px;
+        bottom: 78px;
+        left: 12px;
+        right: 12px;
+      }
+    }
+
+    @media (max-width: 560px) {
+      :root {
+        --model-scale: .56;
+        --active-model-scale: .54;
+      }
+
+      .app {
+        width: min(100% - 20px, 1180px);
+        padding-top: 14px;
+      }
+
+      .panel-inner {
+        padding: 14px;
+      }
+
+      .status-line {
+        flex-direction: column;
+        font-size: .82rem;
+      }
+
+      .lock-area {
+        width: 820px;
+      }
+
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">🔑</div>
+        <div>
+          <h1>台灣山羊古鎖 × 南洋工藝</h1>
+          <p class="subtitle">Taiwan Serow & Indonesian Heritage Lock Simulator</p>
+        </div>
+      </div>
+      <div class="controls" aria-label="工具列">
+        <button class="chip active" type="button">🌐 語言: 繁中</button>
+        <button class="chip" id="soundBtn" type="button">🔊 操作音: 開</button>
+        <button class="chip active" id="perspectiveBtn" type="button">👁️ 透視: 開</button>
+        <button class="tool-button" id="resetBtn" type="button">↻ 重置</button>
+      </div>
+    </header>
+
+    <section class="panel">
+      <div class="panel-inner story">
+        <h2 class="section-title">💡 設計靈感來源</h2>
+        <p>本裝置復刻台灣山羊古鎖的青銅質感與傳統構造，並結合印尼皇室蠟染圖騰 Batik，讓一把簧片古鎖同時承載山林、海浪與祝福。</p>
+        <ul class="story-list">
+          <li><strong>台灣野山羊：</strong>特有種，具強大攀登能力，象徵堅韌與攀向高峰。</li>
+          <li><strong>破浪紋 Parang：</strong>S 型幾何海浪，象徵不屈不撓，呼應山羊攀登峭壁的韌性。</li>
+          <li><strong>棕櫚紋 Kawung：</strong>十字交錯橢圓，象徵純潔與圓滿，賦予古鎖鎖住平安的祝福。</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="layout" style="margin-top:18px">
+      <section class="panel">
+        <div class="stage" id="stage">
+          <div class="status-line">
+            <span id="lockStatus">🔴 狀態: 鎖定中 (Locked)</span>
+            <span id="hapticStatus">Parallax & Haptics: Active</span>
+          </div>
+          <figure class="hero-model" id="heroModel" aria-label="互動式台灣野山羊古鎖模型">
+            <svg class="serow-lock-svg" viewBox="0 0 920 420" role="img" aria-labelledby="modelTitle modelDesc">
+              <title id="modelTitle">台灣野山羊結合青銅古鎖的互動模型</title>
+              <desc id="modelDesc">由網頁 SVG 與 CSS 組成的山羊古鎖模型，包含山羊、U 形鎖樑、青銅鎖牌與水平鑰匙。</desc>
+              <defs>
+                <linearGradient id="skyMist" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#1a2525"/>
+                  <stop offset=".48" stop-color="#283326"/>
+                  <stop offset="1" stop-color="#10100b"/>
+                </linearGradient>
+                <linearGradient id="bronze" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#f0c16c"/>
+                  <stop offset=".22" stop-color="#967047"/>
+                  <stop offset=".52" stop-color="#3b2a1e"/>
+                  <stop offset=".74" stop-color="#b38b55"/>
+                  <stop offset="1" stop-color="#241a13"/>
+                </linearGradient>
+                <linearGradient id="darkMetal" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0" stop-color="#1a1d1d"/>
+                  <stop offset=".34" stop-color="#5b5b54"/>
+                  <stop offset=".72" stop-color="#181b1b"/>
+                  <stop offset="1" stop-color="#070808"/>
+                </linearGradient>
+                <linearGradient id="goatBronze" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#c59d62"/>
+                  <stop offset=".26" stop-color="#6f5537"/>
+                  <stop offset=".56" stop-color="#2e251c"/>
+                  <stop offset=".84" stop-color="#8d704a"/>
+                  <stop offset="1" stop-color="#1d1712"/>
+                </linearGradient>
+                <linearGradient id="hornMetal" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#d1bd89"/>
+                  <stop offset=".5" stop-color="#675034"/>
+                  <stop offset="1" stop-color="#241a12"/>
+                </linearGradient>
+                <radialGradient id="lockGlow" cx=".63" cy=".55" r=".42">
+                  <stop offset="0" stop-color="#ffd36d" stop-opacity=".85"/>
+                  <stop offset=".58" stop-color="#f3b552" stop-opacity=".16"/>
+                  <stop offset="1" stop-color="#f3b552" stop-opacity="0"/>
+                </radialGradient>
+                <pattern id="engravePattern" width="22" height="22" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+                  <path d="M0 12 C6 2 16 2 22 12" fill="none" stroke="#ffd88a" stroke-width="2" opacity=".32"/>
+                </pattern>
+                <filter id="softShadow" x="-20%" y="-20%" width="140%" height="150%">
+                  <feDropShadow dx="0" dy="16" stdDeviation="12" flood-color="#000" flood-opacity=".45"/>
+                </filter>
+              </defs>
+
+              <rect width="920" height="420" rx="8" fill="url(#skyMist)"/>
+              <path d="M0 210 L92 105 L162 170 L258 68 L368 180 L458 98 L590 192 L690 84 L920 226 L920 420 L0 420Z" fill="#2d382c" opacity=".62"/>
+              <path d="M0 236 L120 152 L212 210 L332 128 L455 222 L570 152 L690 222 L805 144 L920 230 L920 420 L0 420Z" fill="#182018" opacity=".78"/>
+              <path d="M45 332 C170 292 265 320 370 300 C515 270 642 302 760 278 C842 263 883 272 920 290 L920 420 L45 420Z" fill="#1d130d" opacity=".86"/>
+              <path d="M115 320 C260 300 480 310 720 292" fill="none" stroke="#6d553a" stroke-width="22" stroke-linecap="round"/>
+              <path d="M118 313 C255 300 475 308 718 287" fill="none" stroke="#b38b55" stroke-width="3" opacity=".45"/>
+              <circle class="key-glow" cx="682" cy="225" r="150" fill="url(#lockGlow)"/>
+
+              <g class="model-core" filter="url(#softShadow)">
+                <g class="svg-shackle">
+                  <path d="M535 168 L535 94 C535 38 688 38 688 94 L688 184" fill="none" stroke="url(#darkMetal)" stroke-width="42" stroke-linecap="round"/>
+                  <path d="M535 168 L535 94 C535 38 688 38 688 94 L688 184" fill="none" stroke="#d2aa67" stroke-width="4" opacity=".38"/>
+                  <path d="M646 80 L692 80" stroke="#d5aa62" stroke-width="5" opacity=".5"/>
+                  <path d="M652 93 L686 93" stroke="#352417" stroke-width="4" opacity=".7"/>
+                </g>
+
+                <g class="goat-form">
+                  <path d="M205 252 C145 250 104 220 102 181 C101 133 154 106 232 119 C286 128 329 158 347 204 C366 252 315 274 205 252Z" fill="url(#goatBronze)"/>
+                  <path d="M118 169 C78 174 55 203 61 235 C65 262 103 265 134 239 C120 216 115 195 118 169Z" fill="url(#goatBronze)"/>
+                  <path d="M326 190 C350 148 383 120 429 111 C474 102 507 122 518 158 C531 200 493 229 432 224 C391 221 356 211 326 190Z" fill="url(#goatBronze)"/>
+                  <path d="M495 151 C555 145 579 174 569 207 C559 238 504 231 470 210 C495 193 507 174 495 151Z" fill="url(#goatBronze)"/>
+                  <path d="M268 250 L248 326" stroke="#3a291c" stroke-width="22" stroke-linecap="round"/>
+                  <path d="M342 245 L326 328" stroke="#322317" stroke-width="22" stroke-linecap="round"/>
+                  <path d="M457 221 L438 329" stroke="#2d2118" stroke-width="24" stroke-linecap="round"/>
+                  <path d="M536 218 L523 326" stroke="#241a13" stroke-width="22" stroke-linecap="round"/>
+                  <path d="M235 326 L269 326 M315 328 L352 328 M426 329 L462 329 M513 326 L548 326" stroke="#15100c" stroke-width="11" stroke-linecap="round"/>
+                  <path d="M426 116 C392 78 377 47 402 33 C431 49 441 78 438 111" fill="url(#hornMetal)"/>
+                  <path d="M449 113 C428 73 424 37 453 28 C482 50 485 84 472 124" fill="url(#hornMetal)"/>
+                  <path d="M390 126 L383 85 L416 106Z" fill="#5e432b"/>
+                  <path d="M492 134 L510 94 L525 144Z" fill="#5a3c27"/>
+                  <ellipse cx="471" cy="158" rx="9" ry="10" fill="#fff0ba"/>
+                  <circle cx="472" cy="158" r="4" fill="#12100b"/>
+                  <ellipse cx="552" cy="182" rx="5" ry="4" fill="#120c08"/>
+                  <path d="M520 198 C536 208 553 209 565 199" fill="none" stroke="#130e0a" stroke-width="4" stroke-linecap="round" opacity=".55"/>
+                  <path class="svg-fur" d="M158 134 C135 159 126 196 136 232 M194 123 C168 151 158 205 172 250 M231 128 C206 164 200 211 214 258 M386 128 C361 157 355 194 368 222 M421 118 C403 147 400 190 414 219 M455 126 C439 156 441 191 461 218" fill="none" stroke="#f6d487" stroke-width="3"/>
+                  <path class="etched-line" d="M102 183 C146 160 196 170 236 205 C196 210 150 225 116 249" fill="none" stroke="#f4ce78" stroke-width="4" opacity=".4"/>
+                  <path class="etched-line" d="M165 128 C204 160 251 174 330 174" fill="none" stroke="#f4ce78" stroke-width="3" opacity=".35"/>
+                </g>
+
+                <g class="lock-plate">
+                  <path d="M402 160 C452 144 555 145 615 166 L641 248 C594 286 455 288 386 254 Z" fill="url(#bronze)" stroke="#1a110b" stroke-width="7"/>
+                  <path d="M418 174 C468 159 548 161 598 177 L616 239 C573 263 476 268 409 246 Z" fill="rgba(25,16,10,.38)" stroke="#d2a45f" stroke-width="3"/>
+                  <path d="M402 160 C452 144 555 145 615 166 L641 248 C594 286 455 288 386 254 Z" fill="url(#engravePattern)" opacity=".62"/>
+                  <circle cx="478" cy="217" r="50" fill="none" stroke="#d9a653" stroke-width="9"/>
+                  <circle cx="585" cy="184" r="27" fill="none" stroke="#d9a653" stroke-width="7"/>
+                  <path d="M476 219 C461 218 452 227 452 244 L452 270 L492 270 L492 244 C492 228 487 220 476 219Z" fill="#0a0604" stroke="#a76d2a" stroke-width="5"/>
+                  <path d="M470 242 L470 265 M484 242 L484 265" stroke="#4c2b14" stroke-width="5"/>
+                  <circle cx="422" cy="176" r="8" fill="#c08a42"/>
+                  <circle cx="622" cy="236" r="8" fill="#c08a42"/>
+                  <circle cx="404" cy="245" r="8" fill="#c08a42"/>
+                  <path class="etched-line" d="M425 207 L442 199 M429 230 L448 230 M518 177 L533 194 M548 239 L568 230 M579 184 L600 184" stroke="#ffe09a" stroke-width="3" opacity=".58"/>
+                  <text x="544" y="222" fill="#f1c76d" font-size="24" font-weight="800" text-anchor="middle">台灣</text>
+                  <text x="544" y="250" fill="#f1c76d" font-size="24" font-weight="800" text-anchor="middle">山羊鎖</text>
+                </g>
+
+                <g class="svg-key">
+                  <path d="M574 221 L815 221" stroke="url(#darkMetal)" stroke-width="22" stroke-linecap="round"/>
+                  <path d="M574 221 L815 221" stroke="#e0b15c" stroke-width="5" stroke-linecap="round" opacity=".58"/>
+                  <path d="M584 207 L606 207 L606 236 L586 236 L586 228 L574 228 L574 215 L584 215Z" fill="#d8a34c"/>
+                  <circle cx="837" cy="221" r="55" fill="none" stroke="#d8a34c" stroke-width="16"/>
+                  <circle cx="837" cy="221" r="20" fill="none" stroke="#5b3718" stroke-width="8"/>
+                  <path d="M837 166 L837 276 M782 221 L892 221 M798 181 L876 259 M876 181 L798 259" stroke="#6b4017" stroke-width="7" stroke-linecap="round"/>
+                  <circle cx="837" cy="221" r="8" fill="#f0c16c"/>
+                </g>
+              </g>
+            </svg>
+          </figure>
+          <div class="lock-area" id="lockArea">
+            <div class="shackle" id="shackle"></div>
+            <div class="lock-body" id="lockBody">
+              <div class="goat-head" aria-label="台灣山羊造型鎖身">
+                <span class="goat-ear left" aria-hidden="true"></span>
+                <span class="goat-ear right" aria-hidden="true"></span>
+                <span class="goat-facet head-a" aria-hidden="true"></span>
+                <span class="goat-facet head-b" aria-hidden="true"></span>
+                <span class="goat-eye" aria-hidden="true"></span>
+                <div class="goat-face"></div>
+              </div>
+              <div class="goat-body-3d" aria-hidden="true">
+                <span class="goat-facet body-a"></span>
+                <span class="goat-facet body-b"></span>
+                <span class="goat-facet body-c"></span>
+                <span class="goat-back"></span>
+                <span class="goat-neck"></span>
+                <span class="goat-beard"></span>
+              </div>
+              <div class="goat-tail-3d" aria-hidden="true"></div>
+              <div class="carved-badge" aria-hidden="true">台灣<br>古鎖</div>
+              <div class="keyhole" aria-hidden="true"></div>
+            </div>
+            <div class="key" id="key" aria-hidden="true"></div>
+          </div>
+          <div class="leaves" aria-hidden="true">🌿</div>
+          <button class="goat-call" id="goatBtn" type="button">🌿 咩～點我！</button>
+        </div>
+      </section>
+
+      <aside class="workshop">
+        <section class="panel">
+          <div class="panel-inner">
+            <h2 class="section-title">🔓 解鎖步驟指引</h2>
+            <div class="steps" aria-label="解鎖步驟">
+              <div class="step active" data-step="1"><span class="step-number">1</span><span>將鑰匙拖入鎖孔</span></div>
+              <div class="step" data-step="2"><span class="step-number">2</span><span>向內推入，壓縮簧片</span></div>
+              <div class="step" data-step="3"><span class="step-number">3</span><span>向左拖曳，拉開鎖樑</span></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-inner workshop">
+            <h2 class="section-title">🎨 客製化工坊</h2>
+            <div class="field">
+              <label for="depth">🔑 鑰匙插入深度</label>
+              <input id="depth" type="range" min="0" max="100" value="0">
+              <div class="range-readout"><span id="depthValue">0</span>%</div>
+            </div>
+            <div class="field">
+              <label for="pull">🔓 鎖樑拉開距離</label>
+              <input id="pull" type="range" min="0" max="100" value="0">
+              <div class="range-readout"><span id="pullValue">0</span>%</div>
+            </div>
+            <div class="field">
+              <label>鎖身材質</label>
+              <div class="button-grid" id="materialChoices">
+                <button class="choice active" type="button" data-metal="#8a633a">斑駁青銅</button>
+                <button class="choice" type="button" data-metal="#c99132">皇室黃金</button>
+                <button class="choice" type="button" data-metal="#3b3a36">生鐵黑</button>
+              </div>
+            </div>
+            <div class="field">
+              <label>鑲嵌圖騰</label>
+              <div class="button-grid" id="patternChoices">
+                <button class="choice active" type="button" data-pattern="parang">Batik Parang</button>
+                <button class="choice" type="button" data-pattern="kawung">Batik Kawung</button>
+                <button class="choice" type="button" data-pattern="plain">無圖騰</button>
+              </div>
+            </div>
+            <button class="primary" id="unlockBtn" type="button">完成解鎖</button>
+          </div>
+        </section>
+      </aside>
+    </div>
+
+    <section class="panel" style="margin-top:18px">
+      <div class="panel-inner notes">
+        <div class="note">
+          <h3>⚙️ 簧片鎖機械原理</h3>
+          <p>傳統中式古鎖多為簧片結構。鎖樑插入鎖身時，尾端兩片具彈性的黃銅簧片會向外撐開，卡死在鎖腔內。解鎖時，鑰匙前端的特殊凹槽會把簧片收合，鎖樑便能抽出。</p>
+        </div>
+        <div class="note">
+          <h3>⛰️ 山羊古鎖工藝特點</h3>
+          <p>鎖身以龍頭般生動的山羊頭部為主體，復刻台灣野山羊終身不脫落的錐狀雙角；鎖身飾以吉祥如意銘文與紋樣，象徵長壽吉祥與鎖住好運。</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="success" id="successDialog" role="dialog" aria-modal="true" aria-labelledby="successTitle">
+    <div class="success-card">
+      <h2 id="successTitle">🐐🌊✨ 解鎖成功！</h2>
+      <p><strong>崖上之羊 · 崖下之浪</strong></p>
+      <p>您已成功解開這把結合雙國工藝的古鎖。台灣野山羊的堅韌攀登，與印尼傳統紋樣完美交融；鑰匙開啟的瞬間，也象徵解開人生難關，迎向強大而和諧的力量。</p>
+      <button class="primary" id="closeSuccess" type="button">再次鑑賞</button>
+    </div>
+  </div>
+
+  <div class="bottom-habitat" aria-label="底部草地與行走的 Q 版台灣野山羊">
+    <button class="chibi-goat" id="walkingGoat" type="button" aria-label="點擊 Q 版台灣野山羊發出叫聲">
+      <span class="goat-bubble" id="goatBubble">咩～</span>
+      <span class="chibi-tail" aria-hidden="true"></span>
+      <span class="chibi-goat-body" aria-hidden="true"></span>
+      <span class="chibi-goat-head" aria-hidden="true">
+        <span class="chibi-goat-eye" aria-hidden="true"></span>
+      </span>
+      <span class="chibi-goat-leg one" aria-hidden="true"></span>
+      <span class="chibi-goat-leg two" aria-hidden="true"></span>
+      <span class="chibi-goat-leg three" aria-hidden="true"></span>
+      <span class="chibi-goat-leg four" aria-hidden="true"></span>
+    </button>
+  </div>
+
+  <script>
+    const root = document.documentElement;
+    const stage = document.getElementById("stage");
+    const depth = document.getElementById("depth");
+    const pull = document.getElementById("pull");
+    const depthValue = document.getElementById("depthValue");
+    const pullValue = document.getElementById("pullValue");
+    const lockStatus = document.getElementById("lockStatus");
+    const hapticStatus = document.getElementById("hapticStatus");
+    const perspectiveBtn = document.getElementById("perspectiveBtn");
+    const soundBtn = document.getElementById("soundBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const successDialog = document.getElementById("successDialog");
+    const closeSuccess = document.getElementById("closeSuccess");
+    const unlockBtn = document.getElementById("unlockBtn");
+    const goatBtn = document.getElementById("goatBtn");
+    const walkingGoat = document.getElementById("walkingGoat");
+    const goatBubble = document.getElementById("goatBubble");
+    const heroModel = document.getElementById("heroModel");
+    const lockArea = document.getElementById("lockArea");
+    const steps = [...document.querySelectorAll(".step")];
+
+    let perspectiveOn = true;
+    let soundOn = true;
+
+    const patterns = {
+      parang: "repeating-linear-gradient(135deg, rgba(255,224,154,.22) 0 10px, transparent 10px 22px), repeating-linear-gradient(45deg, rgba(114,227,253,.14) 0 7px, transparent 7px 19px)",
+      kawung: "radial-gradient(ellipse at 25% 35%, rgba(255,230,166,.23) 0 13px, transparent 14px), radial-gradient(ellipse at 75% 65%, rgba(255,230,166,.18) 0 13px, transparent 14px)",
+      plain: "linear-gradient(145deg, rgba(255,255,255,.08), transparent 28%)"
+    };
+
+    function beep(freq = 420) {
+      if (!soundOn || !window.AudioContext) return;
+      const ctx = new AudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.frequency.value = freq;
+      gain.gain.value = 0.045;
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.08);
+    }
+
+    function goatBleat() {
+      if (!soundOn || !window.AudioContext) return;
+      const ctx = new AudioContext();
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.001, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.09, ctx.currentTime + 0.03);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.42);
+      gain.connect(ctx.destination);
+
+      [0, 0.12, 0.23].forEach((offset, index) => {
+        const osc = ctx.createOscillator();
+        osc.type = index === 1 ? "triangle" : "sawtooth";
+        osc.frequency.setValueAtTime(470 - index * 45, ctx.currentTime + offset);
+        osc.frequency.exponentialRampToValueAtTime(280 - index * 22, ctx.currentTime + offset + 0.12);
+        osc.connect(gain);
+        osc.start(ctx.currentTime + offset);
+        osc.stop(ctx.currentTime + offset + 0.18);
+      });
+    }
+
+    function updateState() {
+      const d = Number(depth.value);
+      const p = Number(pull.value);
+      depthValue.textContent = d;
+      pullValue.textContent = p;
+      root.style.setProperty("--key-depth", `${Math.round(d * 1.06)}px`);
+      root.style.setProperty("--unlock-shift", `${Math.round(p * -1.25)}px`);
+      root.style.setProperty("--model-turn", `${-8 + (p * .14)}deg`);
+      root.style.setProperty("--key-light", (d / 520).toFixed(3));
+      root.style.setProperty("--unlock-glow", (.18 + p / 520).toFixed(3));
+      root.style.setProperty("--hero-scale", (1 + d / 13000).toFixed(4));
+      root.style.setProperty("--hero-shift", `${Math.round(p * -0.045)}px`);
+      root.style.setProperty("--hero-light-alpha", (.08 + d / 500).toFixed(3));
+      root.style.setProperty("--svg-key-shift", `${Math.round(d * -1.58)}px`);
+      root.style.setProperty("--svg-shackle-shift", `${Math.round(p * -0.32)}px`);
+
+      steps.forEach((step, index) => {
+        step.classList.toggle("active", (index === 0 && d < 55) || (index === 1 && d >= 55 && p < 55) || (index === 2 && d >= 55 && p >= 55));
+        step.classList.toggle("done", (index === 0 && d >= 55) || (index === 1 && d >= 85) || (index === 2 && p >= 85));
+      });
+
+      if (d >= 85 && p >= 85) {
+        lockStatus.textContent = "🟢 狀態: 已解鎖 (Unlocked)";
+      } else if (d >= 55) {
+        lockStatus.textContent = "🟠 狀態: 簧片壓縮中";
+      } else {
+        lockStatus.textContent = "🔴 狀態: 鎖定中 (Locked)";
+      }
+    }
+
+    depth.addEventListener("input", updateState);
+    pull.addEventListener("input", updateState);
+
+    stage.addEventListener("pointermove", (event) => {
+      if (!perspectiveOn) return;
+      const rect = stage.getBoundingClientRect();
+      const x = (event.clientX - rect.left) / rect.width - .5;
+      const y = (event.clientY - rect.top) / rect.height - .5;
+      root.style.setProperty("--tilt", `${(y * -8).toFixed(2)}deg`);
+      heroModel.style.transform = `rotateX(${(y * -5).toFixed(2)}deg) rotateY(${(x * 6).toFixed(2)}deg) scale(1.01)`;
+      lockArea.style.transform = `translate(-50%, -50%) scale(var(--active-model-scale)) rotateX(${(y * -8).toFixed(2)}deg) rotateY(${(x * 8).toFixed(2)}deg)`;
+    });
+
+    stage.addEventListener("pointerleave", () => {
+      heroModel.style.transform = "rotateX(0deg) rotateY(0deg)";
+      lockArea.style.transform = "translate(-50%, -50%) scale(var(--active-model-scale)) rotateX(0deg) rotateY(0deg)";
+    });
+
+    document.getElementById("materialChoices").addEventListener("click", (event) => {
+      const btn = event.target.closest("button[data-metal]");
+      if (!btn) return;
+      document.querySelectorAll("#materialChoices .choice").forEach(item => item.classList.remove("active"));
+      btn.classList.add("active");
+      root.style.setProperty("--metal", btn.dataset.metal);
+      beep(520);
+    });
+
+    document.getElementById("patternChoices").addEventListener("click", (event) => {
+      const btn = event.target.closest("button[data-pattern]");
+      if (!btn) return;
+      document.querySelectorAll("#patternChoices .choice").forEach(item => item.classList.remove("active"));
+      btn.classList.add("active");
+      root.style.setProperty("--pattern", patterns[btn.dataset.pattern]);
+      beep(560);
+    });
+
+    perspectiveBtn.addEventListener("click", () => {
+      perspectiveOn = !perspectiveOn;
+      perspectiveBtn.classList.toggle("active", perspectiveOn);
+      perspectiveBtn.textContent = perspectiveOn ? "👁️ 透視: 開" : "👁️ 透視: 關";
+      hapticStatus.textContent = perspectiveOn ? "Parallax & Haptics: Active" : "Parallax & Haptics: Off";
+    });
+
+    soundBtn.addEventListener("click", () => {
+      soundOn = !soundOn;
+      soundBtn.classList.toggle("active", soundOn);
+      soundBtn.textContent = soundOn ? "🔊 操作音: 開" : "🔇 操作音: 關";
+    });
+
+    resetBtn.addEventListener("click", () => {
+      depth.value = 0;
+      pull.value = 0;
+      successDialog.classList.remove("show");
+      updateState();
+      beep(360);
+    });
+
+    unlockBtn.addEventListener("click", () => {
+      depth.value = 100;
+      pull.value = 100;
+      updateState();
+      successDialog.classList.add("show");
+      beep(720);
+    });
+
+    closeSuccess.addEventListener("click", () => {
+      successDialog.classList.remove("show");
+    });
+
+    goatBtn.addEventListener("click", () => {
+      goatBtn.textContent = "🐐 咩～山風來了！";
+      goatBleat();
+      setTimeout(() => {
+        goatBtn.textContent = "🌿 咩～點我！";
+      }, 1300);
+    });
+
+    walkingGoat.addEventListener("click", () => {
+      goatBleat();
+      walkingGoat.classList.add("speaking", "paused");
+      goatBubble.textContent = Math.random() > 0.5 ? "咩～" : "咩咩！";
+      setTimeout(() => {
+        walkingGoat.classList.remove("speaking", "paused");
+      }, 900);
+    });
+
+    root.style.setProperty("--metal", "#8a633a");
+    root.style.setProperty("--pattern", patterns.parang);
+    updateState();
+  </script>
+</body>
+</html>
