@@ -60,3 +60,6 @@
 - 協作記憶壓縮：`codex_compressed/2026-06-08_193312.tar.gz`。
 - 使用者希望未來可在其他電腦下載並繼續開發，且要求將 GitHub 啟動伺服器的說明與連結做成 Markdown。
 - 已新增根目錄 `README.md`，包含 Git clone、Download ZIP、Windows/macOS/Linux 本機伺服器啟動、更新拉取、修改推送與 GitHub Pages 固定網址。
+- 已啟用 GitHub Pages，來源為 `main` 分支根目錄；`pages build and deployment` 成功完成。
+- 已驗證 `https://su2006sgm.github.io/gu-suo-shan-yang-2/site/` 回傳 HTTP 200。
+- 協作記憶壓縮：`codex_compressed/2026-06-08_193800.tar.gz`。

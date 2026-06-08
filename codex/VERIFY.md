@@ -46,3 +46,6 @@
 - 根目錄 `README.md` 包含 GitHub 專案、GitHub Pages、本機伺服器與跨電腦下載說明。
 - Git Clone 網址：`https://github.com/su2006sgm/gu-suo-shan-yang-2.git`
 - GitHub Pages 網址：`https://su2006sgm.github.io/gu-suo-shan-yang-2/site/`
+- GitHub Pages 已從 `main` 分支根目錄啟用，API 狀態為 `built`。
+- GitHub Pages 固定網站網址已驗證回傳 HTTP 200。
+- GitHub Actions `pages build and deployment` 已完成且狀態為 `success`。

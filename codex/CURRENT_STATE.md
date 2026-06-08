@@ -9,7 +9,7 @@
 ## 最近完成
 
 - 已新增根目錄 `README.md`，提供其他電腦下載、Git clone、啟動本機伺服器、修改推送與 GitHub Pages 網址說明。
-- 已準備以 GitHub Pages 固定網址公開網站：`https://su2006sgm.github.io/gu-suo-shan-yang-2/site/`。
+- 已啟用 GitHub Pages 並完成第一次建置，固定網站網址：`https://su2006sgm.github.io/gu-suo-shan-yang-2/site/`。
 - 已於 2026-06-08 建立並推送公開 GitHub 儲存庫，後依使用者要求改名為「古鎖山羊2」；因 GitHub 會移除中文儲存庫網址字元，實際網址名稱使用 `gu-suo-shan-yang-2`，描述為「古鎖山羊2」：`https://github.com/su2006sgm/gu-suo-shan-yang-2`，主分支為 `main`。
 - 已建立新版 `codex/` 最小骨架。
 - 已新增 `.gitignore`，忽略協作暫存、私密資料、壓縮備份與常見建置產物。
