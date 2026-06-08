@@ -54,3 +54,4 @@
 - 已完成 GitHub CLI 裝置授權，確認登入帳號為 `su2006sgm`。
 - 已建立公開儲存庫 `https://github.com/su2006sgm/taiwan-goat-lock`，設定 `origin` 並推送 `main`。
 - 協作記憶壓縮：`codex_compressed/2026-06-08_193053.tar.gz`。
+- 第二次推送時 Git Credential Manager 誤用舊帳號 `loyu0425` 而回傳 403；執行 `gh auth setup-git` 後已改用 `su2006sgm` 並推送成功。

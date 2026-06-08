@@ -43,3 +43,14 @@
 - 不要做：不要把 RAR 裡的 OBJ/FBX/DAE 直接塞進網頁造成新依賴，除非使用者明確要求真正匯入 3D 模型。
 - 驗證方式：檢查 `codex/tmp/lowpolygoat-20260602/lowpolygoat/goat.obj` 與頁面 `.goat-facet` 元素。
 - 相關檔案：`site/index.html`
+
+## Git 推送可能使用舊 GitHub 帳號憑證
+
+- 狀態：active
+- 證據：observed
+- 日期：2026-06-08
+- 影響範圍：推送到 `su2006sgm/taiwan-goat-lock`
+- 正確做法：先確認 `gh auth status` 顯示 `su2006sgm`；若 `git push` 仍顯示其他帳號的 403，執行 `gh auth setup-git` 後重推。
+- 不要做：不要因 `gh` 已登入就假設 Git Credential Manager 一定使用同一帳號。
+- 驗證方式：`git push origin main` 成功，且 `git rev-parse HEAD` 與 `git rev-parse origin/main` 相同。
+- 相關檔案：`codex/COMMANDS.md`
