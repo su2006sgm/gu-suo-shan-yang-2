@@ -49,8 +49,19 @@ tar -czf codex_compressed/YYYY-MM-DD_HHMMSS.tar.gz codex
 ## GitHub
 
 - 遠端儲存庫：`https://github.com/su2006sgm/gu-suo-shan-yang-2`
+- GitHub Pages：`https://su2006sgm.github.io/gu-suo-shan-yang-2/site/`
 - 主分支：`main`
 
 ```powershell
 git push origin main
 ```
+
+## 其他電腦啟動
+
+```powershell
+git clone https://github.com/su2006sgm/gu-suo-shan-yang-2.git
+cd gu-suo-shan-yang-2\site
+py -m http.server 5190
+```
+
+開啟：`http://127.0.0.1:5190/`

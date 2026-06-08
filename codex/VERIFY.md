@@ -40,3 +40,9 @@
 
 - `codex/` 根目錄需包含新版入口與狀態文件。
 - `codex_compressed/` 僅保留一個 `.tar.gz` 壓縮檔。
+
+## 2026-06-08 GitHub 使用說明驗證
+
+- 根目錄 `README.md` 包含 GitHub 專案、GitHub Pages、本機伺服器與跨電腦下載說明。
+- Git Clone 網址：`https://github.com/su2006sgm/gu-suo-shan-yang-2.git`
+- GitHub Pages 網址：`https://su2006sgm.github.io/gu-suo-shan-yang-2/site/`

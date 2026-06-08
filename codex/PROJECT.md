@@ -8,6 +8,7 @@
 
 - GitHub 專案名稱：古鎖山羊2
 - GitHub 儲存庫：`https://github.com/su2006sgm/gu-suo-shan-yang-2`
+- GitHub Pages：`https://su2006sgm.github.io/gu-suo-shan-yang-2/site/`
 - 來源網址：`https://gemini.google.com/share/216eb2bfab81`
 - 靜態網站：`site/index.html`
 - 網站 QR code：`site/site_qrcode.png`、`site/site_qrcode.svg`
@@ -31,3 +32,4 @@
 - 若 localhost.run 失效，改用 `npx --yes localtunnel --port 5190` 建立免費暫時公開網址。
 - 不使用外部 QR code API。
 - 不新增全域套件或專案依賴。
+- 根目錄 `README.md` 提供跨電腦下載、啟動與推送說明。

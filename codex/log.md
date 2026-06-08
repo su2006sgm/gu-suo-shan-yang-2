@@ -58,3 +58,5 @@
 - 使用者要求把 GitHub 專案名稱改成「古鎖山羊2」。GitHub 移除純中文名稱後曾暫時產生 `-2`；已立即修正儲存庫網址名稱為 `gu-suo-shan-yang-2`，並將描述設為「古鎖山羊2」。
 - 已同步本機 `origin` 為 `https://github.com/su2006sgm/gu-suo-shan-yang-2.git`。
 - 協作記憶壓縮：`codex_compressed/2026-06-08_193312.tar.gz`。
+- 使用者希望未來可在其他電腦下載並繼續開發，且要求將 GitHub 啟動伺服器的說明與連結做成 Markdown。
+- 已新增根目錄 `README.md`，包含 Git clone、Download ZIP、Windows/macOS/Linux 本機伺服器啟動、更新拉取、修改推送與 GitHub Pages 固定網址。
